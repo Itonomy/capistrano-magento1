@@ -25,6 +25,6 @@ namespace :deploy do
     invoke 'magento:cache:flush'
     invoke 'magento:setup:permissions'
     invoke 'magento:maintenance:disable' if fetch(:magento_deploy_maintenance)
-    invoke 'magento:cache:opcache:clear' if fetch(:magento_deploy_clear_opcache)
+    invoke 'magento:setup:clean' if fetch(:magento_deploy_cleanup)
   end
 end

@@ -23,6 +23,17 @@ namespace :magento do
       end
       Rake::Task['magento:setup:permissions'].reenable  ## make task perpetually callable
     end
+
+    task :clean do
+      desc "Remove files after release"
+      on release_roles :all do
+        within release_path do
+          for file in fetch(:magento_deploy_cleanup_files) do
+            execute :rm, "-rf", "#{release_path}/#{file}"
+          end
+        end
+      end
+    end
   end
 
   namespace :cache do
