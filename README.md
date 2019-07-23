@@ -1,63 +1,15 @@
 # Capistrano::Magento
+A Capistrano extension for Magento 1 deployments. Takes care of specific Magento 1 requirements and adds tasks specific to the Magento 1 application.
 
-[Magento](http://magento.com) specific tasks and defaults for [Capistrano 3](https://github.com/capistrano/capistrano) deployment.
-
-## Installation
-
-    $ gem install capistrano-magento
-
-## Usage
-
-First install Capistrano into your Magneto project, this will create some new files and directories.
-
-    $ cd /my/magento/project
-    $ cap install
-
-Now update your `Capfile`:
-
-    # Capfile
-    require 'capistrano/magento'
-
-A number of defaults have been set on the following options, you can of course override these with your own values:
-
-    # config/deploy.rb
-    set :linked_dirs,  [ "var", "media", "sitemaps" ]
-    set :linked_files, [ "app/etc/local.xml" ]
-
-Configure your stages, check out the [getting started guide for Capistrano](http://capistranorb.com/documentation/getting-started/preparing-your-application/)
-
-    $ tree config/deploy
-    config/deploy
-    ├── production.rb
-    └── staging.rb
-
-These are the available Magento specific tasks, most of these are shortcuts to the shell commands already available in Magento:
-
-    $ cap -T
-    ...
-    cap magento:cache:clear            # Clear the Magento Cache
-    cap magento:cache:flush            # Flush the Magento Cache
-    cap magento:cache:clean_merged_js_css # Clear the Magento Cache
-    cap magento:cache:clean_page_cache    # Clear the Magento Cache
-    cap magento:compiler:clear         # Disable compiler include path and remove compiled files
-    cap magento:compiler:compile       # Run compilation process and enable compiler include path
-    cap magento:compiler:disable       # Disable compiler include path
-    cap magento:compiler:enable        # Enable compiler include path
-    cap magento:indexer:reindexall     # Reindex data by all indexers
-    cap magento:logs:clean             # Clean logs
-    cap magento:maintenance:off        # Turn off maintenance mode by removing maintenance.flag file
-    cap magento:maintenance:on         # Turn on maintenance mode by creating maintenance.flag file
-
-Run them in the standard Capistrano way, for example
-
-    $ cap production magento:maintenance:on
-
-Checkout the [Capistrano documentation](http://capistranorb.com/) and [Readme](https://github.com/capistrano/capistrano/blob/master/README.md) for more information about setting up deployment.
+More info will follow sometime.
 
 ## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/itonomy/capistrano-magento1.
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+## Contribution Guidelines
+1. Create a feature branch based on an issue (`git checkout -b feature/ISSUE-NR`)
+2. Commit your changes (`git commit -am '#ISSUE_NR: Fixed this and that''`)
+3. Create a pull request to this repo.
+
+## License
+This project is licensed under the MIT License. See included LICENSE file for full text of MIT.
