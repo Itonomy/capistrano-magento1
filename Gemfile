@@ -1,4 +1,12 @@
-source 'https://rubygems.org'
+##
+# Copyright © 2019 by Itonomy B.V. All rights reserved
+#
+# Licensed under the MIT Licence (MIT)
+# See included LICENSE file for full text of MIT
+#
+# https://itonomy.nl
+##
 
-# Specify your gem's dependencies in capistrano-magento.gemspec
+source 'https://rubygems.org'
 gemspec
+gem "sshkit"

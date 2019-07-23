@@ -7,4 +7,6 @@
 # https://itonomy.nl
 ##
 
-require "bundler/gem_tasks"
+require 'capistrano/deploy'
+
+load File.expand_path('../../tasks/notifier.rake', __FILE__)

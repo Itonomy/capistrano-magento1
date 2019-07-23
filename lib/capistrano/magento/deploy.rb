@@ -7,4 +7,7 @@
 # https://itonomy.nl
 ##
 
-require "bundler/gem_tasks"
+require 'capistrano/deploy'
+require 'capistrano/magento'
+
+load File.expand_path('../../tasks/deploy.rake', __FILE__)

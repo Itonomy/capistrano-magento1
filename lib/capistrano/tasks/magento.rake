@@ -1,10 +1,36 @@
+##
+# Copyright © 2019 by Itonomy B.V. All rights reserved
+#
+# Licensed under the MIT Licence (MIT)
+# See included LICENSE file for full text of MIT
+#
+# https://itonomy.nl
+##
 namespace :magento do
+
+  namespace :setup do
+    desc 'Sets proper permissions on application'
+    task :permissions do
+      on release_roles :all do
+        within release_path do
+          execute :find, release_path, "-type d -exec chmod #{fetch(:magento_deploy_chmod_d).to_i} {} +"
+          execute :find, release_path, "-type f -exec chmod #{fetch(:magento_deploy_chmod_f).to_i} {} +"
+          execute :find, "#{release_path}/var", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
+          execute :find, "#{release_path}/media", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
+          execute :find, "#{release_path}/var", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
+          execute :find, "#{release_path}/media", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
+        end
+      end
+      Rake::Task['magento:setup:permissions'].reenable  ## make task perpetually callable
+    end
+  end
+
   namespace :cache do
 
       desc "Clear the Magento Cache"
       task :clear do
-        on roles(fetch(:magento_roles)) do
-          within fetch(:magento_working_dir) do
+        on release_roles :all do
+          within release_path do
             execute :php, "-r", "\"require_once('app/Mage.php'); Mage::app()->cleanCache(); \""
           end
         end
@@ -12,8 +38,8 @@ namespace :magento do
 
       desc "Flush the Magento Cache Storage"
       task :flush do
-        on roles(fetch(:magento_roles)) do
-          within fetch(:magento_working_dir) do
+        on release_roles :all do
+          within release_path do
             execute :php, "-r", "\"require_once('app/Mage.php'); Mage::dispatchEvent('adminhtml_cache_flush_all'); Mage::app()->getCacheInstance()->flush(); \""
           end
         end
@@ -21,8 +47,8 @@ namespace :magento do
 
       desc "Clean Merged Js Css"
       task :clean_merged_js_css do
-        on roles(fetch(:magento_roles)) do
-          within fetch(:magento_working_dir) do
+        on release_roles :all do
+          within release_path do
             execute :php, "-r", "\"require_once('app/Mage.php'); Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID); Mage::getModel('core/design_package')->cleanMergedJsCss();  Mage::dispatchEvent('clean_media_cache_after'); \""
           end
         end
@@ -30,8 +56,8 @@ namespace :magento do
 
       desc "Clean the Magento external Page Cache"
       task :clean_page_cache do
-        on roles(fetch(:magento_roles)) do
-          within fetch(:magento_working_dir) do
+        on release_roles :all do
+          within release_path do
             execute :php, "-r", "\"require_once('app/Mage.php'); Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID); if (Mage::helper('pagecache')->isEnabled()) { Mage::helper('pagecache')->getCacheControlInstance()->clean(); } \""
           end
         end
@@ -41,19 +67,19 @@ namespace :magento do
 
   namespace :maintenance do
     desc "Turn on maintenance mode by creating maintenance.flag file"
-    task :on do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir)  do
-          execute :touch, "#{fetch(:magento_working_dir)}/maintenance.flag"
+    task :enable do
+      on release_roles :all do
+        within release_path  do
+          execute :touch, "#{release_path}/maintenance.flag"
         end
       end
     end
 
     desc "Turn off maintenance mode by removing maintenance.flag file"
-    task :off do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir)  do
-          execute :rm, "-f", "#{fetch(:magento_working_dir)}/maintenance.flag"
+    task :disable do
+      on release_roles :all do
+        within release_path  do
+          execute :rm, "-f", "#{release_path}/maintenance.flag"
         end
       end
     end
@@ -62,8 +88,8 @@ namespace :magento do
   namespace :compiler do
     desc "Run compilation process and enable compiler include path"
     task :compile do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "compiler.php", "--", "compile"
         end
       end
@@ -71,8 +97,8 @@ namespace :magento do
 
     desc "Enable compiler include path"
     task :enable do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "compiler.php", "--", "enable"
         end
       end
@@ -80,8 +106,8 @@ namespace :magento do
 
     desc "Disable compiler include path"
     task :disable do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "compiler.php", "--", "disable"
         end
       end
@@ -89,8 +115,8 @@ namespace :magento do
 
     desc "Disable compiler include path and remove compiled files"
     task :clear do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "compiler.php", "--", "clear"
         end
       end
@@ -100,8 +126,8 @@ namespace :magento do
   namespace :indexer do
     desc "Reindex data by all indexers"
     task :reindexall do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "indexer.php", "--", "reindexall"
         end
       end
@@ -111,20 +137,11 @@ namespace :magento do
   namespace :logs do
     desc "Clean logs"
     task :clean do
-      on roles(fetch(:magento_roles)) do
-        within fetch(:magento_working_dir).join('shell') do
+      on release_roles :all do
+        within release_path.join('shell') do
           execute :php, "-f", "log.php", "--", "clean"
         end
       end
     end
-  end
-end
-
-namespace :load do
-  task :defaults do
-    set :linked_dirs, fetch(:linked_dirs, []).push("var", "media", "sitemaps")
-    set :linked_files, fetch(:linked_files, []).push("app/etc/local.xml")
-    set :magento_roles, :all
-    set :magento_working_dir, -> { release_path }
   end
 end

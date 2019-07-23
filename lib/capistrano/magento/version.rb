@@ -7,4 +7,8 @@
 # https://itonomy.nl
 ##
 
-require "bundler/gem_tasks"
+module Capistrano
+  module Magento
+    VERSION = '0.1.0'
+  end
+end
