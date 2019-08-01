@@ -10,7 +10,7 @@
 set :linked_dirs, fetch(:linked_dirs, []).push(
     "var",
     "media",
-    "sitemaps"
+    "sitemap"
 )
 
 set :linked_files, fetch(:linked_files, []).push(
