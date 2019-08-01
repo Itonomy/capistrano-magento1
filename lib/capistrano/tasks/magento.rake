@@ -15,10 +15,10 @@ namespace :magento do
         within release_path do
           execute :find, release_path, "-type d -exec chmod #{fetch(:magento_deploy_chmod_d).to_i} {} +"
           execute :find, release_path, "-type f -exec chmod #{fetch(:magento_deploy_chmod_f).to_i} {} +"
-          execute :find, "#{release_path}/var", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
-          execute :find, "#{release_path}/media", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
-          execute :find, "#{release_path}/var", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
-          execute :find, "#{release_path}/media", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
+          execute :find, "#{release_path}/var/", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
+          execute :find, "#{release_path}/media/", "-type f -exec chmod #{fetch(:magento_deploy_var_media_chmod_f).to_i} {} +"
+          execute :find, "#{release_path}/var/", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
+          execute :find, "#{release_path}/media/", "-type d -exec chmod #{fetch(:magento_deploy_var_media_chmod_d).to_i} {} +"
         end
       end
       Rake::Task['magento:setup:permissions'].reenable  ## make task perpetually callable
